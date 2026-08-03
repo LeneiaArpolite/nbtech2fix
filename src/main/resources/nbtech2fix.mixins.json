@@ -1,0 +1,13 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "nbtech2.fix.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "nbtech2.fix.mixin.OptionalMixinPlugin",
+  "refmap": "nbtech2fix.refmap.json",
+  "mixins": [],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

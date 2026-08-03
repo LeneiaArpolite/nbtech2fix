@@ -1,0 +1,12 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "nbtech2.fix.mixin.playershells",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "nbtech2.fix.mixin.playershells.PlayerShellsMixinPlugin",
+  "refmap": "nbtech2fix.refmap.json",
+  "mixins": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

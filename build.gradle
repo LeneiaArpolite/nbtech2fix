@@ -1,0 +1,179 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'maven-publish'
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-${minecraft_version}-forge-neoforge"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {}
+
+        server {
+            args '--nogui'
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+            property 'mixin.debug.verbose', 'true'
+            property 'mixin.debug.countInjections', 'true'
+            args '--mod', mod_id,
+                    '--all',
+                    '--output', file('build/generated-test-resources'),
+                    '--existing', file('src/main/resources')
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+    config "${mod_id}.playershells.mixins.json"
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.minecraftforge.net/' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven {
+        url = 'https://www.cursemaven.com'
+        content { includeGroup 'curse.maven' }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    compileOnly fg.deobf('curse.maven:codechicken-lib-1-8-242818:5753868')
+    compileOnly fg.deobf('curse.maven:brandons-core-231382:5422013')
+    compileOnly fg.deobf('curse.maven:draconic-evolution-223565:6793843')
+
+    compileOnly fg.deobf('curse.maven:applied-energistics-2-223794:7148487')
+    compileOnly fg.deobf('curse.maven:advancedae-1084104:7939754')
+    compileOnly fg.deobf('curse.maven:packagedauto-308380:7329736')
+    compileOnly fg.deobf('curse.maven:packageddraconic-833931:6788649')
+    compileOnly fg.deobf('curse.maven:neo-eco-ae-extension-1460639:8438819')
+
+    compileOnly fg.deobf('curse.maven:mekanism-268560:6552911')
+    compileOnly fg.deobf('curse.maven:moremekasuitmodules-1205682:6891366')
+
+    compileOnly fg.deobf('curse.maven:observable-509575:5643037')
+    compileOnly 'org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.0'
+
+    compileOnly fg.deobf('curse.maven:player-shells-1367394:7465375')
+
+    if (findProperty('testModGroup') == 'de') {
+        runtimeOnly fg.deobf('curse.maven:codechicken-lib-1-8-242818:5753868')
+        runtimeOnly fg.deobf('curse.maven:brandons-core-231382:5422013')
+        runtimeOnly fg.deobf('curse.maven:draconic-evolution-223565:6793843')
+        runtimeOnly fg.deobf('curse.maven:packagedauto-308380:7329736')
+        runtimeOnly fg.deobf('curse.maven:packageddraconic-833931:6788649')
+    }
+    if (findProperty('testModGroup') == 'mekanism') {
+        runtimeOnly fg.deobf('curse.maven:mekanism-268560:6552911')
+        runtimeOnly fg.deobf('curse.maven:moremekasuitmodules-1205682:6891366')
+    }
+    if (findProperty('testModGroup') == 'playershells') {
+        runtimeOnly fg.deobf('curse.maven:player-shells-1367394:7465375')
+    }
+    if (findProperty('testModGroup') == 'ae') {
+        runtimeOnly fg.deobf('curse.maven:applied-energistics-2-223794:7148487')
+        runtimeOnly fg.deobf('curse.maven:guideme-1173950:6489464')
+        runtimeOnly fg.deobf('curse.maven:advancedae-1084104:7939754')
+        runtimeOnly fg.deobf('curse.maven:geckolib-388172:6920925')
+        runtimeOnly fg.deobf('curse.maven:packagedauto-308380:7329736')
+    }
+    if (findProperty('testModGroup') == 'neoeco') {
+        runtimeOnly fg.deobf('curse.maven:applied-energistics-2-223794:7148487')
+        runtimeOnly fg.deobf('curse.maven:guideme-1173950:6489464')
+        runtimeOnly fg.deobf('curse.maven:neo-eco-ae-extension-1460639:8438819')
+        runtimeOnly fg.deobf('curse.maven:ldlib-626676:5927130')
+    }
+    if (findProperty('testModGroup') == 'observable') {
+        runtimeOnly fg.deobf('curse.maven:observable-509575:5643037')
+        runtimeOnly fg.deobf('curse.maven:architectury-api-419699:5137938')
+        runtimeOnly fg.deobf('curse.maven:kotlin-for-forge-351264:5402061')
+        runtimeOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+        runtimeOnly 'org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.6.0'
+        runtimeOnly 'org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.0'
+    }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    filteringCharset = 'UTF-8'
+
+    def replaceProperties = [
+            minecraft_version: minecraft_version,
+            forge_version    : forge_version,
+            mod_id           : mod_id,
+            mod_name         : mod_name,
+            mod_license      : mod_license,
+            mod_version      : mod_version
+    ]
+    inputs.properties replaceProperties
+    filesMatching('META-INF/mods.toml') {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : 'LeneiaArpolite',
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : 'LeneiaArpolite',
+                'MixinConfigs'             : "${mod_id}.mixins.json,${mod_id}.playershells.mixins.json"
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+        }
+    }
+}

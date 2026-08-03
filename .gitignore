@@ -1,0 +1,15 @@
+.gradle/
+build/
+out/
+run/
+run-data/
+repo/
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+*.log
+*.rar
+libs/
+!gradle/wrapper/gradle-wrapper.jar
