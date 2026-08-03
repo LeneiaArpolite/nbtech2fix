@@ -1,0 +1,35 @@
+{
+  "required": true,
+  "package": "nbtech2.fix.Mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AE.AdvancedAE.FixAECraftNBT.MixinAdvCraftingCPULogic",
+    "AE.AdvancedAE.FixAECraftNBT.MixinAdvProcessingPattern",
+    "AE.AdvancedAE.FixAECraftNBT.MixinAdvProcessingPatternInput",
+    "AE.FixAECraftNBT.MixinAEProcessingPattern",
+    "AE.FixAECraftNBT.MixinAEProcessingPatternInput",
+    "AE.FixAECraftNBT.MixinCraftingCpuLogic",
+    "AE.NeoEco.FixAECraftNBT.MixinECOCraftingCPULogic",
+    "DE.FixDECuriosOrderBug.MixinModularArmorEventHandler",
+    "DE.FixDEDislocatorThreadBug.MixinDislocator",
+    "DE.FixDEHUDRenderBug.MixinShieldHudElement",
+    "MMSM.MixinShieldProviderHandler",
+    "MMSM.FixMMSMSwimInAir.MixinPlayer",
+    "Observable.FixObNetStuck.MixinProfiler",
+    "Observable.FixObNoOshiFileStuck.MixinProfiler",
+    "PkgAuto.Fix_PackagedDE_Doesnt_Use_Input.MixinAEPackagingProviderBlockEntity",
+    "PkgAuto.FixAECraftNBT.MixinSimpleInput",
+    "PkgAuto.PDE.FixPackagedDEDoesntUseInput.MixinFusionCrafterBlockEntity",
+    "PS.FixPlayerShellsDiePriority.MixinServerPlayer"
+  ],
+  "client": [
+    "DE.FixBrandonsCoreNullptr.MixinProcessHandlerClient",
+    "MMSM.FixPhaseCamera.MixinCamera"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

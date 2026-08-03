@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="LeneiaArpolite"
+description='''
+本模组为 Applied Energistics 2、Draconic Evolution、PackagedAuto、PackagedDraconic、BrandonsCore、MoreMekaSuitModules、Observable 和 Player Shells 等模组提供可独立启用的修复与兼容优化。
+
+Adds independently configurable fixes and compatibility improvements for several technology mods.
+'''
+
+[[mixins]]
+config="${mod_id}.mixins.json"
+
+[[dependencies.${mod_id}]]
+modId="neoforge"
+type="required"
+versionRange="[,${neo_version})"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"

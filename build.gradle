@@ -1,0 +1,146 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id 'idea'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.10'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+sourceSets.main.resources {
+    srcDir('src/generated/resources')
+    exclude('**/*.bbmodel')
+    exclude('**/.cache/**')
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://www.cursemaven.com' }
+}
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        data {
+            data()
+            programArguments.addAll(
+                    '--mod', project.mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+            )
+        }
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    compileOnly('curse.maven:codechicken-lib-1-8-242818:7281427')
+    compileOnly('curse.maven:brandons-core-231382:7130990')
+    compileOnly('curse.maven:draconic-evolution-223565:7584459')
+    compileOnly('curse.maven:guideme-1173950:7127444')
+    compileOnly('curse.maven:applied-energistics-2-223794:7027323')
+    compileOnly('curse.maven:packagedauto-308380:7329743')
+    compileOnly('curse.maven:packageddraconic-833931:7155031')
+    compileOnly('curse.maven:advancedae-1084104:7849217')
+    compileOnly('curse.maven:extendedae-plus-1337639:7960385')
+    compileOnly('curse.maven:neo-eco-ae-extension-1460639:7884362')
+    compileOnly('curse.maven:mekanism-268560:7621971')
+    compileOnly('curse.maven:moremekasuitmodules-1205682:6891370')
+    compileOnly('curse.maven:observable-509575:6697124')
+    compileOnly('org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0')
+    compileOnly('curse.maven:player-shells-1367394:7198250')
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+jar {
+    exclude('.cache/**')
+    exclude('nbtech2/fix/DataGen/**')
+}

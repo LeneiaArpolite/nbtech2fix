@@ -1,0 +1,13 @@
+{
+  "itemGroup.aexde": "Example Mod Tab",
+  "block.aexde.example_block": "Example Block",
+  "item.aexde.example_item": "Example Item",
+
+  "aexde.configuration.title": "AE x DE Configs",
+  "aexde.configuration.section.aexde.common.toml": "AE x DE Configs",
+  "aexde.configuration.section.aexde.common.toml.title": "AE x DE Configs",
+  "aexde.configuration.items": "Item List",
+  "aexde.configuration.logDirtBlock": "Log Dirt Block",
+  "aexde.configuration.magicNumberIntroduction": "Magic Number Text",
+  "aexde.configuration.magicNumber": "Magic Number"
+}
