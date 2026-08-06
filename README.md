@@ -5,6 +5,8 @@
 
 此分支对应 Minecraft 1.21.1 NeoForge 版本。源码公开仅供查看，作者保留所有权利。
 
+模组名称来源于作者与朋友玩的自制整合包“超级牛逼的科技整合包 2”。
+
 本模组为 [AE2],[龙之研究],[封包合成],[封包龙研],[BrandonsCore],[MoreMekaSuitModule],[PlayerShells] 等模组添加一些 Bug 修复和优化；任何功能可以单独使用。 
 
 This mod adds some bug fixes and optimizations for mods：Applid Energistic,Draconic Evolution, PackagedAuto,PackagedDraconic,BrandonsCore, MoreMekaSuitModule, PlayerShells;Any function can be switched separately.
