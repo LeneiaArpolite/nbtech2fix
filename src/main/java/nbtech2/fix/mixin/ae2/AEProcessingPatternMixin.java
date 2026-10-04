@@ -8,12 +8,18 @@ import appeng.crafting.pattern.AEProcessingPattern;
 import nbtech2.fix.config.Config;
 import nbtech2.fix.util.AEHelper;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = AEProcessingPattern.class, remap = false)
 public abstract class AEProcessingPatternMixin {
+    /** 仅供 AEMixinVerifier 判定本 Mixin 是否应用；@Unique 避免与他人冲突。 */
+    @Unique
+    private void nbtech2fix$markApplied() {
+    }
+
     @Inject(method = "pushInputsToExternalInventory", at = @At("HEAD"), cancellable = true)
     private void nbtech2fix$pushActualNbtVariants(
             KeyCounter[] inputHolder,

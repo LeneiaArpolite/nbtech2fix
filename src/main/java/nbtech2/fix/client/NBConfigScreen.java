@@ -1,5 +1,6 @@
 package nbtech2.fix.client;
 
+import nbtech2.fix.config.Config;
 import nbtech2.fix.config.ConfigEntries;
 import nbtech2.fix.config.ConfigEntries.Entry;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,6 +26,7 @@ public final class NBConfigScreen extends Screen {
     private final int requestedPage;
     private final List<Row> visibleRows = new ArrayList<>();
     private final List<IntField> intFields = new ArrayList<>();
+    private final List<ListField> listFields = new ArrayList<>();
 
     private int page;
     private int pageCount;
@@ -45,6 +47,7 @@ public final class NBConfigScreen extends Screen {
     protected void init() {
         visibleRows.clear();
         intFields.clear();
+        listFields.clear();
         validationError = null;
 
         pageSize = Math.max(1, (height - 116) / ROW_HEIGHT);
@@ -144,6 +147,19 @@ public final class NBConfigScreen extends Screen {
             field.setValue(Integer.toString(intValue.get()));
             intFields.add(new IntField(entry, intValue, field));
             control = field;
+        } else if (isNamespaceList(entry)) {
+            EditBox field = new EditBox(
+                    font,
+                    controlX,
+                    y,
+                    controlWidth,
+                    20,
+                    Component.translatable(entry.translationKey())
+            );
+            field.setMaxLength(512);
+            field.setValue(joinNamespaces(asNamespaceList(value)));
+            listFields.add(new ListField(entry, value, field));
+            control = field;
         } else {
             return;
         }
@@ -169,8 +185,74 @@ public final class NBConfigScreen extends Screen {
         enumValue.set(values[(current.ordinal() + 1) % values.length]);
     }
 
-    private static boolean isUnsignedIntegerText(String text) {
-        if (text.isEmpty()) {
+    /**
+     * 识别"命名空间列表"型配置项。当前只有 FixAECraftNBTList，
+     * 用配置路径判定，避免把将来别的列表也当命名空间编辑。
+     */
+    private static boolean isNamespaceList(Entry entry) {
+        return Config.isNamespaceListPath(entry.configPath());
+    }
+
+    /** 列表在界面上以逗号分隔展示。 */
+    private static String joinNamespaces(List<? extends String> namespaces) {
+        return String.join(", ", namespaces);
+    }
+
+    /**
+     * 把配置值读成命名空间列表。只有 {@link #isNamespaceList} 为真时才会调用。
+     */
+    @SuppressWarnings("unchecked")
+    private static List<? extends String> asNamespaceList(ForgeConfigSpec.ConfigValue<?> value) {
+        Object current = value.get();
+        if (current instanceof List<?> list) {
+            List<String> result = new ArrayList<>(list.size());
+            for (Object element : list) {
+                if (element instanceof String text) {
+                    result.add(text);
+                }
+            }
+            return result;
+        }
+        return List.of();
+    }
+
+    /**
+     * 解析并写回列表型配置。接受英文逗号 / 中文逗号 / 空格分隔。
+     */
+    @SuppressWarnings("unchecked")
+    private boolean commitListFields() {
+        for (ListField listField : listFields) {
+            if (!listField.entry().isActive()) {
+                continue;
+            }
+
+            List<String> parsed = new ArrayList<>();
+            for (String piece : listField.field().getValue().split("[,，\\s]+")) {
+                String trimmed = piece.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                if (!Config.isValidNamespace(trimmed)) {
+                    validationError = Component.translatable(
+                            "nbtech2fix.configuration.invalid_namespace",
+                            Component.translatable(listField.entry().translationKey()),
+                            trimmed
+                    );
+                    listField.field().setTextColor(0xFF5555);
+                    return false;
+                }
+                parsed.add(trimmed);
+            }
+
+            ((ForgeConfigSpec.ConfigValue<List<? extends String>>) listField.value())
+                    .set(List.copyOf(parsed));
+            listField.value().save();
+            listField.field().setTextColor(0xE0E0E0);
+        }
+        return true;
+    }
+
+    private static boolean isUnsignedIntegerText(String text) {        if (text.isEmpty()) {
             return true;
         }
         for (int index = 0; index < text.length(); index++) {
@@ -220,13 +302,13 @@ public final class NBConfigScreen extends Screen {
     }
 
     private void openPage(int newPage) {
-        if (commitIntFields() && minecraft != null) {
+        if (commitIntFields() && commitListFields() && minecraft != null) {
             minecraft.setScreen(new NBConfigScreen(parent, newPage));
         }
     }
 
     private void closeToParent() {
-        if (commitIntFields() && minecraft != null) {
+        if (commitIntFields() && commitListFields() && minecraft != null) {
             minecraft.setScreen(parent);
         }
     }
@@ -305,5 +387,8 @@ public final class NBConfigScreen extends Screen {
     }
 
     private record IntField(Entry entry, ForgeConfigSpec.IntValue value, EditBox field) {
+    }
+
+    private record ListField(Entry entry, ForgeConfigSpec.ConfigValue<?> value, EditBox field) {
     }
 }

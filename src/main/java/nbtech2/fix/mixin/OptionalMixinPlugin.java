@@ -61,6 +61,12 @@ public final class OptionalMixinPlugin implements IMixinConfigPlugin {
             mixins.add("ae2.AEProcessingPatternInputMixin");
             mixins.add("ae2.AEProcessingPatternMixin");
             mixins.add("ae2.CraftingCpuLogicMixin");
+            // 1.6.1: 把 NBT 策略扩展到「合成 / 锻造台 / 切石机」样板
+            mixins.add("ae2.AECraftingTreeNodeMixin");
+            mixins.add("ae2.AECraftingCpuHelperMixin");
+            mixins.add("ae2.AECraftingPatternMixin");
+            mixins.add("ae2.AESmithingTablePatternMixin");
+            mixins.add("ae2.AEStonecuttingPatternMixin");
         }
         if (loadedMods.contains("ae2") && loadedMods.contains("advanced_ae")) {
             mixins.add("advancedae.AdvCraftingCpuLogicMixin");

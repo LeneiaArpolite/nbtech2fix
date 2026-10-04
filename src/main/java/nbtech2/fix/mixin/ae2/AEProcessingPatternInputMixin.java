@@ -7,12 +7,18 @@ import nbtech2.fix.config.Config;
 import nbtech2.fix.util.AEHelper;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "appeng.crafting.pattern.AEProcessingPattern$Input", remap = false)
 public abstract class AEProcessingPatternInputMixin {
+    /** 仅供 AEMixinVerifier 判定本 Mixin 是否应用；@Unique 避免与他人冲突。 */
+    @Unique
+    private void nbtech2fix$markApplied() {
+    }
+
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     private void nbtech2fix$allowConfiguredNbtVariant(
             AEKey input,

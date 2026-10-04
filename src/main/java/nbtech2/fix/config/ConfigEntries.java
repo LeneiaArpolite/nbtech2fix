@@ -14,6 +14,11 @@ public final class ConfigEntries {
             entry("Fix_DE_Curios_Order_Bug", Config.FIX_DE_CURIOS_ORDER),
             entry("Fix_Player_Shells_Die_Priority", Config.FIX_PLAYER_SHELLS_DEATH_PRIORITY),
             entry("Fix_AE_Craft_NBT", Config.FIX_AE_CRAFT_NBT),
+            listEntry(
+                    "Fix_AE_Craft_NBT_List",
+                    Config.FIX_AE_CRAFT_NBT_LIST,
+                    () -> Config.FIX_AE_CRAFT_NBT.get() == Config.AEIgnoreNbt.LIST
+            ),
             entry("Fix_PackagedDE_Doesnt_Use_Input", Config.FIX_PACKAGED_DE_REAL_INPUT),
             entry("Fix_Observable_Net_Stuck", Config.FIX_OBSERVABLE_NETWORK),
             intEntry(
@@ -40,6 +45,14 @@ public final class ConfigEntries {
 
     private static Entry entry(String commandName, ForgeConfigSpec.ConfigValue<?> value) {
         return new Entry(commandName, value, Integer.MIN_VALUE, Integer.MAX_VALUE, () -> true);
+    }
+
+    private static Entry listEntry(
+            String commandName,
+            ForgeConfigSpec.ConfigValue<?> value,
+            BooleanSupplier activeWhen
+    ) {
+        return new Entry(commandName, value, Integer.MIN_VALUE, Integer.MAX_VALUE, activeWhen);
     }
 
     private static Entry intEntry(
