@@ -64,6 +64,8 @@ AE2 用 NBT 全等判断两个物品是否为同一个 key，因此同一件装�
 
 ### 1.6.1
 
+[说明] 本次更新由 DeepSeek 完成。
+
 [修复] `FixAECraftNBT`（AE 合成忽略材料 NBT）此前只对**加工样板**生效；现补齐**合成样板、锻造台样板、切石机样板**，
 并统一覆盖任意第三方 `IPatternDetails`。此前用带 NBT 的盔甲、工具等作为材料时，
 合成会"无法发出请求"，或（只补一半时）在分子装配室**永久卡住不出货**。
@@ -77,6 +79,8 @@ AE2 用 NBT 全等判断两个物品是否为同一个 key，因此同一件装�
 
 [说明] 产物 NBT 始终由原版配方决定，本模组不会改写；放宽仅作用于"什么算合法输入"。
 因此 `ALL` / `LIST` 的语义是"同物品、NBT 任意不同"，附魔或已损耗的同类装备理论上可被当作材料消耗。
+
+[Note] This update was completed by DeepSeek.
 
 [Fix] `FixAECraftNBT` (ignore material NBT in AE crafting) previously only applied to **processing patterns**.
 It now also covers **crafting patterns, smithing table patterns and stonecutting patterns**, and uniformly
@@ -95,3 +99,9 @@ value are unchanged.
 [Note] Output NBT is always decided by the vanilla recipe and is never rewritten by this mod; the relaxation
 only affects what counts as a valid input. `ALL` / `LIST` therefore mean "same item, any NBT difference",
 so enchanted or damaged equipment of the same item type can in theory be consumed as material.
+
+[Note] Fixes the reported issue where equipment taken out of AppliedE's transmutation module / interface
+(ProjectE EMC converted into AE items) could not be used as AE crafting material because its NBT differed
+from the pattern's. AppliedE registers each known item as a craftable under that exact item key, so any
+NBT difference made AE2 unable to find a matching pattern.
+
