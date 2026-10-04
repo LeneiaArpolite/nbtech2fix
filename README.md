@@ -64,44 +64,16 @@ AE2 用 NBT 全等判断两个物品是否为同一个 key，因此同一件装�
 
 ### 1.6.1
 
-[说明] 本次更新由 DeepSeek 完成。
+[修复]修复AE合成忽略材料NBT（FixAECraftNBT）只对加工样板生效的问题，现覆盖合成样板、锻造台样板与切石机样板；此前用带NBT的盔甲、工具作材料时，合成会无法发出请求，或在分子装配室永久卡住不出货
+[添加]FixAECraftNBT新增LIST模式，可按物品命名空间（modid）指定忽略NBT的范围，默认["draconicevolution", "minecraft"]
+[添加]命名空间列表现可在配置界面与命令中直接编辑，无需手动改配置文件
+[添加]新增自检命令/nbtech2fix tools CheckAEMixins，用于确认AE相关Mixin是否注入成功
+[说明]本次更新由DeepSeek完成
 
-[修复] `FixAECraftNBT`（AE 合成忽略材料 NBT）此前只对**加工样板**生效；现补齐**合成样板、锻造台样板、切石机样板**，
-并统一覆盖任意第三方 `IPatternDetails`。此前用带 NBT 的盔甲、工具等作为材料时，
-合成会"无法发出请求"，或（只补一半时）在分子装配室**永久卡住不出货**。
+[Fix]Fixed FixAECraftNBT (ignore material NBT in AE crafting) only applying to processing patterns; it now also covers crafting patterns, smithing table patterns and stonecutting patterns. Previously, using NBT-bearing armor or tools as materials would either fail to dispatch a craft at all, or hang the molecular assembler forever without producing output
+[Add]Added a LIST mode to FixAECraftNBT, filtering by item namespace (mod id); default is ["draconicevolution", "minecraft"]
+[Add]The namespace list can now be edited from the config screen and via command, no need to edit the config file by hand
+[Add]Added /nbtech2fix tools CheckAEMixins to self-check whether the AE related Mixins are injected correctly
+[Note]This update was completed by DeepSeek
 
-[添加] `FixAECraftNBT` 新增 `LIST` 模式，可按物品命名空间（modid）精确指定放宽范围，
-默认 `["draconicevolution", "minecraft"]`。原有 `DISABLED` / `DE_ONLY` / `ALL` 语义不变，默认值不变。
-
-[添加] 配置界面与 `/nbtech2fix config` 命令均支持编辑该命名空间列表（逗号分隔，带合法性校验）。
-
-[添加] `/nbtech2fix tools CheckAEMixins`：自检 AE 相关 Mixin 注入状态，便于反馈问题时快速定位。
-
-[说明] 产物 NBT 始终由原版配方决定，本模组不会改写；放宽仅作用于"什么算合法输入"。
-因此 `ALL` / `LIST` 的语义是"同物品、NBT 任意不同"，附魔或已损耗的同类装备理论上可被当作材料消耗。
-
-[Note] This update was completed by DeepSeek.
-
-[Fix] `FixAECraftNBT` (ignore material NBT in AE crafting) previously only applied to **processing patterns**.
-It now also covers **crafting patterns, smithing table patterns and stonecutting patterns**, and uniformly
-covers any third-party `IPatternDetails`. Before this, using NBT-bearing armor or tools as materials would
-either fail to dispatch a craft at all, or (with only half the fix) **hang the molecular assembler forever**.
-
-[Add] New `LIST` mode for `FixAECraftNBT`, filtering by item namespace (mod id). Default
-`["draconicevolution", "minecraft"]`. Existing `DISABLED` / `DE_ONLY` / `ALL` semantics and the default
-value are unchanged.
-
-[Add] The namespace list is editable from both the config screen and `/nbtech2fix config`
-(comma separated, validated).
-
-[Add] `/nbtech2fix tools CheckAEMixins`: self-check for AE Mixin injection status, for faster triage.
-
-[Note] Output NBT is always decided by the vanilla recipe and is never rewritten by this mod; the relaxation
-only affects what counts as a valid input. `ALL` / `LIST` therefore mean "same item, any NBT difference",
-so enchanted or damaged equipment of the same item type can in theory be consumed as material.
-
-[Note] Fixes the reported issue where equipment taken out of AppliedE's transmutation module / interface
-(ProjectE EMC converted into AE items) could not be used as AE crafting material because its NBT differed
-from the pattern's. AppliedE registers each known item as a craftable under that exact item key, so any
-NBT difference made AE2 unable to find a matching pattern.
 
